@@ -14,4 +14,12 @@ class PlatformData {
     'Steam': 'assets/images/bg_steam.jpg',
     'Epic Games': 'assets/images/bg_epic.jpg',
   };
+
+  static const Map<String, String> platformNames = {
+    'PlayStation': 'PlayStation',
+    'Xbox': 'Xbox',
+    'Ubisoft': 'Ubisoft',
+    'Steam': 'Steam',
+    'Epic Games': 'Epic Games',
+  };
 }

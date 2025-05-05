@@ -4,6 +4,7 @@ import '../widgets/navigation_rail_widget.dart';
 import '../screens/friends_screen.dart';
 import '../screens/platform_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/login_screen.dart';
 import '../constants/platform_data.dart'; // <-- importamos los logos
 
 class HomeScreen extends StatefulWidget {
@@ -50,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 6:
         return _buildPlatformScreen('Epic Games');
       case 7:
-        return SettingsScreen();
+        return LoginScreen();
       default:
         return Center(
           child: Text(
