@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return _buildPlatformScreen('Xbox');
       case 4:
-        return _buildPlatformScreen('Nintendo');
+        return _buildPlatformScreen('Ubisoft');
       case 5:
         return _buildPlatformScreen('Steam');
       case 6:

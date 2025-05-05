@@ -66,8 +66,8 @@ class NavigationRailWidget extends StatelessWidget {
               label: Text('Xbox'),
             ),
             NavigationRailDestination(
-              icon: _platformIcon('Nintendo'),
-              label: Text('Nintendo'),
+              icon: _platformIcon('Ubisoft'),
+              label: Text('Ubisoft'),
             ),
             NavigationRailDestination(
               icon: _platformIcon('Steam'),
