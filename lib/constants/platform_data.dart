@@ -22,4 +22,32 @@ class PlatformData {
     'Steam': 'Steam',
     'Epic Games': 'Epic Games',
   };
+
+  static const Map<String, List<Map<String, String>>> platformAccounts = {
+    'PlayStation': [
+      {
+        'profileImage': 'assets/icons/profile.jpeg',
+        'nickname': 'GamerX',
+        'email': 'gamerx@example.com',
+      },
+      {
+        'profileImage': 'assets/icons/profile.jpeg',
+        'nickname': 'SniperQueen',
+        'email': 'sniperq@example.com',
+      },
+    ],
+    'Xbox': [
+      {
+        'profileImage': 'assets/icons/profile.jpeg',
+        'nickname': 'ProDestroyer',
+        'email': 'prodestroyer@example.com',
+      },
+      {
+        'profileImage': 'assets/icons/profile.jpeg',
+        'nickname': 'AceHunter',
+        'email': 'acehunter@example.com',
+      },
+    ],
+    // Agrega más plataformas si deseas
+  };
 }

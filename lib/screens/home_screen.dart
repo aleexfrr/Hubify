@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../widgets/navigation_rail_widget.dart';
 import '../screens/friends_screen.dart';
 import '../screens/platform_screen.dart';
-import '../screens/settings_screen.dart';
 import '../screens/login_screen.dart';
 import '../constants/platform_data.dart'; // <-- importamos los logos
 

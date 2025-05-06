@@ -1,37 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:hubify/screens/register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class _RegisterScreenState extends State<RegisterScreen> {
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  void _login() {
+  void _register() {
+    final name = nameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
+    if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor completa todos los campos')),
       );
       return;
     }
 
-    // Aquí iría tu lógica real de login con Firebase/Auth API/etc.
-    print('Intentando iniciar sesión con:');
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Las contraseñas no coinciden')),
+      );
+      return;
+    }
+
+    // Aquí iría la lógica real de registro con Firebase/Auth API/etc.
+    print('Registrando usuario:');
+    print('Nombre: $name');
     print('Correo: $email');
     print('Contraseña: $password');
 
-    // Simular navegación a home
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Inicio de sesión exitoso')),
+      const SnackBar(content: Text('Registro exitoso')),
     );
+
+    // Simular navegación al login
+    Navigator.pop(context);
   }
 
   @override
@@ -39,18 +52,22 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo
+          // Fondo de pantalla
           Positioned.fill(
             child: Image.asset(
               'assets/images/bg_login.jpeg',
               fit: BoxFit.cover,
             ),
           ),
-          // Capa oscura
+
+          // Capa oscura para contraste
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.3)),
+            child: Container(
+              color: Colors.black.withOpacity(0.3),
+            ),
           ),
-          // Contenido
+
+          // Contenido principal
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -64,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(
                       maxWidth: 400,
-                      minHeight: 500,
+                      minHeight: 550,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -75,9 +92,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           backgroundColor: Colors.transparent,
                         ),
                         const SizedBox(height: 16),
+
                         Text(
-                          "¡Bienvenido a Hubify!",
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          "Crea tu cuenta",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
@@ -85,7 +106,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 32),
 
-                        // Email
+                        TextField(
+                          controller: nameController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: 'Nombre completo',
+                            labelStyle: const TextStyle(color: Colors.white),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            prefixIcon: const Icon(Icons.person, color: Colors.white),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
                         TextField(
                           controller: emailController,
                           style: const TextStyle(color: Colors.white),
@@ -101,7 +135,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Contraseña
                         TextField(
                           controller: passwordController,
                           obscureText: true,
@@ -115,13 +148,27 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: const Icon(Icons.lock, color: Colors.white),
                           ),
                         ),
+                        const SizedBox(height: 20),
+
+                        TextField(
+                          controller: confirmPasswordController,
+                          obscureText: true,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: 'Confirmar contraseña',
+                            labelStyle: const TextStyle(color: Colors.white),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            prefixIcon: const Icon(Icons.lock_outline, color: Colors.white),
+                          ),
+                        ),
                         const SizedBox(height: 30),
 
-                        // Botón de inicio de sesión
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: _login,
+                            onPressed: _register,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context).primaryColor,
                               foregroundColor: Colors.white,
@@ -130,20 +177,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text("Iniciar sesión"),
+                            child: const Text("Registrarse"),
                           ),
                         ),
                         const SizedBox(height: 16),
 
-                        // Registro
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                            );
+                            Navigator.pop(context);
                           },
-                          child: const Text("¿No tienes cuenta? Regístrate"),
+                          child: const Text("¿Ya tienes cuenta? Inicia sesión"),
                         ),
                       ],
                     ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hubify/utils/text_styles.dart';
 import 'package:hubify/widgets/profile_card.dart';
 
+import '../constants/platform_data.dart';
+
 class PlatformScreen extends StatelessWidget {
   final String platformName;
   final String platformImage;
@@ -13,31 +15,11 @@ class PlatformScreen extends StatelessWidget {
     required this.platformBackground,
   });
 
-  final List<Map<String, String>> accountData = const [
-    {
-      'profileImage': 'assets/icons/profile.jpeg',
-      'nickname': 'GamerX',
-      'email': 'gamerx@example.com',
-    },
-    {
-      'profileImage': 'assets/icons/profile.jpeg',
-      'nickname': 'SniperQueen',
-      'email': 'sniperq@example.com',
-    },
-    {
-      'profileImage': 'assets/icons/profile.jpeg',
-      'nickname': 'ProDestroyer',
-      'email': 'prodestroyer@example.com',
-    },
-    {
-      'profileImage': 'assets/icons/profile.jpeg',
-      'nickname': 'AceHunter',
-      'email': 'acehunter@example.com',
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, String>> accountData =
+        PlatformData.platformAccounts[platformName] ?? [];
+
     return Stack(
       children: [
         // Fondo
