@@ -1,38 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:hubify/screens/forgot_password_screen.dart';
-import 'package:hubify/screens/register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreen();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
 
-  void _login() {
+  void _forgotPassword() {
     final email = emailController.text.trim();
-    final password = passwordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
+    if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor completa todos los campos')),
+        const SnackBar(content: Text('Por favor introduzca un correo electrónico.')),
       );
       return;
     }
 
     // Aquí iría tu lógica real de login con Firebase/Auth API/etc.
-    print('Intentando iniciar sesión con:');
+    print('Intentando recuperar cuenta:');
     print('Correo: $email');
-    print('Contraseña: $password');
 
-    // Simular navegación a home
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Inicio de sesión exitoso')),
+      const SnackBar(content: Text('Se ha enviado el correo de recuperación correctamente.')),
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
   }
 
   @override
@@ -77,10 +77,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          "¡Bienvenido a Hubify!",
+                          "¿Olvidaste tu contraseña?",
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -100,29 +108,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           keyboardType: TextInputType.emailAddress,
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
 
-                        // Contraseña
-                        TextField(
-                          controller: passwordController,
-                          obscureText: true,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Contraseña',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-
-                        // Botón de inicio de sesión
+                        // Botón enviar
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: _login,
+                            onPressed: _forgotPassword,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context).primaryColor,
                               foregroundColor: Colors.white,
@@ -131,32 +123,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text("Iniciar sesión"),
+                            child: const Text("Enviar correo"),
                           ),
                         ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 20),
 
-                        // Olvido contraseña
+                        // Volver al login
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
-                            );
+                            Navigator.pop(context);
                           },
-                          child: const Text("¿Has olvidado la contraseña?"),
-                        ),
-
-
-                        // Registro
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                            );
-                          },
-                          child: const Text("¿No tienes cuenta? Regístrate"),
+                          child: const Text("Volver a inicio de sesión"),
                         ),
                       ],
                     ),
