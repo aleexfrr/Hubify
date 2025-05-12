@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hubify/utilities/utils.dart';
+import '../services/auth_service.dart';
+import 'home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,24 +19,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
 
-  void _register() {
-    if (!_formKey.currentState!.validate()) return;
+  bool isLoading = false;
 
+  void _register() async {
     final name = nameController.text.trim();
+    // final lastName = lastNameController.text.trim(); // Asegúrate de tener un controlador para el apellido
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
-    print('Registrando usuario:');
-    print('Nombre: $name');
-    print('Correo: $email');
-    print('Contraseña: $password');
+    // Validar que los campos no estén vacíos
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor completa todos los campos')),
+      );
+      return;
+    }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Registro exitoso')),
-    );
+    setState(() => isLoading = true); // Activar estado de carga
 
-    Navigator.pop(context);
+    try {
+      // Intentar registrar al usuario con nombre, apellido, email y contraseña
+      final user = await _authService.registerWithEmail(
+        email: email,
+        password: password,
+        nombre: name,
+        apellido: "lastName",
+      );
+
+      if (user != null) {
+        // Si el registro fue exitoso
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Registro exitoso')),
+          );
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen())
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+        print(e.toString());
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false); // Desactivar estado de carga
+      }
+    }
   }
 
   @override
@@ -118,7 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: passwordController,
                             obscureText: !_isPasswordVisible,
                             style: const TextStyle(color: Colors.white),
-                            validator: Utils.validatePassword,
+                            validator: Utils.validatePassword2, // Cambia a validatePassword si tienes la función
                             decoration: _inputDecoration(
                               "Contraseña",
                               Icons.lock,

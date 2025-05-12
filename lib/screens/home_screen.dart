@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hubify/screens/settings_screen.dart';
 import '../widgets/navigation_rail_widget.dart';
 import '../screens/friends_screen.dart';
 import '../screens/platform_screen.dart';
-import '../screens/login_screen.dart';
 import '../constants/platform_data.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -52,7 +52,7 @@ class HomeScreenState extends State<HomeScreen> {
       case 6:
         return _buildPlatformScreen('Epic Games');
       case 7:
-        return LoginScreen();
+        return SettingsScreen();
       default:
         return Center(
           child: Text(

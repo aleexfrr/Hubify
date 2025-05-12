@@ -4,6 +4,8 @@ import 'package:hubify/screens/register_screen.dart';
 import 'package:hubify/utilities/utils.dart';
 import 'package:hubify/services/auth_service.dart';
 
+import 'home_screen.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -39,7 +41,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Inicio de sesión exitoso')),
           );
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen())
+          );
         }
       }
     } catch (e) {
@@ -141,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: passwordController,
                             obscureText: true,
                             style: const TextStyle(color: Colors.white),
-                            validator: Utils.validatePassword,
+                            validator: Utils.validatePassword2, // Cambia a validatePassword si necesitas validar la contraseña
                             decoration: InputDecoration(
                               labelText: 'Contraseña',
                               labelStyle: const TextStyle(color: Colors.white),
