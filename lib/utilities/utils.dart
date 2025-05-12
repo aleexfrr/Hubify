@@ -53,7 +53,7 @@ class Utils {
   }
 
   // Validar contraseña
-  static String? validatePassword2(String? value) {
+  static String? validatePasswordSimple(String? value) {
     if (value == null || value.isEmpty) {
       return 'Por favor ingrese su contraseña';
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hubify/utilities/utils.dart';
 import '../services/auth_service.dart';
+import '../services/user_service.dart';
 import 'home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
 
   bool isLoading = false;
 
@@ -44,12 +46,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final user = await _authService.registerWithEmail(
         email: email,
         password: password,
-        nombre: name,
-        apellido: "lastName",
       );
 
       if (user != null) {
-        // Si el registro fue exitoso
+        await _userService.createUserDocument(
+          nombre: name,
+          apellido: "lastname",
+          email: email,
+        );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Registro exitoso')),
@@ -155,7 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             controller: passwordController,
                             obscureText: !_isPasswordVisible,
                             style: const TextStyle(color: Colors.white),
-                            validator: Utils.validatePassword2, // Cambia a validatePassword si tienes la función
+                            validator: Utils.validatePasswordSimple, // Cambia a validatePassword si tienes la función
                             decoration: _inputDecoration(
                               "Contraseña",
                               Icons.lock,

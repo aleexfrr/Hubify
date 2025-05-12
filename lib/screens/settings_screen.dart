@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hubify/screens/login_screen.dart';
+import 'package:hubify/screens/profile_screen.dart';
 import 'package:hubify/utilities/text_styles.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    // final user = "alex"; // Simulación de usuario logueado
 
     if (user == null) {
       return const LoginScreen(); // Si no está logueado, mostrar login
@@ -42,6 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           const SizedBox(height: 16),
 
+          // Sección de Cuenta
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text('Cuenta', style: sectionTitleStyle),
@@ -50,16 +51,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.person),
             title: const Text('Perfil'),
             onTap: () {
-              // Navegar a pantalla de perfil
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(),
+                ),
+              );
             },
-          ),
-          ListTile(
-            leading: const Icon(Icons.email),
-            title: const Text('Correo electrónico'),
-            onTap: () {},
           ),
           const Divider(),
 
+          // Sección de Notificaciones
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text('Notificaciones', style: sectionTitleStyle),
@@ -76,6 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const Divider(),
 
+          // Sección de Apariencia
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text('Apariencia', style: sectionTitleStyle),
@@ -90,6 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const Divider(),
 
+          // Opción de Cerrar sesión
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Cerrar sesión'),

@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
 
   bool isLoading = false;
+  bool _isPasswordVisible = true; // Variable para controlar la visibilidad de la contraseña
 
   void _login() async {
     final email = emailController.text.trim();
@@ -144,9 +145,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           // Contraseña
                           TextFormField(
                             controller: passwordController,
-                            obscureText: true,
+                            obscureText: _isPasswordVisible,
                             style: const TextStyle(color: Colors.white),
-                            validator: Utils.validatePassword2, // Cambia a validatePassword si necesitas validar la contraseña
+                            validator: Utils.validatePasswordSimple, // Cambia a validatePassword si necesitas validar la contraseña
                             decoration: InputDecoration(
                               labelText: 'Contraseña',
                               labelStyle: const TextStyle(color: Colors.white),
@@ -167,6 +168,19 @@ class _LoginScreenState extends State<LoginScreen> {
                               focusedErrorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: const BorderSide(color: Colors.redAccent, width: 2),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isPasswordVisible
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
                               ),
                             ),
                           ),
