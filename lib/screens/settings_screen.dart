@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hubify/utils/text_styles.dart';
+import 'package:hubify/utilities/text_styles.dart';
 
 class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(

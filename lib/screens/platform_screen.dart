@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hubify/utils/text_styles.dart';
+import 'package:hubify/utilities/text_styles.dart';
 import 'package:hubify/widgets/profile_card.dart';
 
 import '../constants/platform_data.dart';
@@ -9,7 +9,8 @@ class PlatformScreen extends StatelessWidget {
   final String platformImage;
   final String platformBackground;
 
-  PlatformScreen({
+  const PlatformScreen({
+    super.key,
     required this.platformName,
     required this.platformImage,
     required this.platformBackground,

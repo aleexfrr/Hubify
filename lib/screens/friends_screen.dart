@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/friend_card.dart';
 
 class FriendsScreen extends StatelessWidget {
+  const FriendsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +27,7 @@ class FriendsScreen extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withAlpha((0.2 * 255).toInt()),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: TextField(
@@ -43,7 +45,7 @@ class FriendsScreen extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withAlpha((0.1 * 255).toInt()),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(

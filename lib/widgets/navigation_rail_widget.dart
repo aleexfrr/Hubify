@@ -5,7 +5,8 @@ class NavigationRailWidget extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
-  NavigationRailWidget({
+  const NavigationRailWidget({
+    super.key,
     required this.selectedIndex,
     required this.onDestinationSelected,
   });

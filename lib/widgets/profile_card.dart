@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hubify/utils/text_styles.dart';
+import 'package:hubify/utilities/text_styles.dart';
 
 class ProfileCard extends StatelessWidget {
   final String profileImage;
@@ -8,12 +8,12 @@ class ProfileCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const ProfileCard({
-    Key? key,
+    super.key,
     required this.profileImage,
     required this.nickname,
     required this.email,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class ProfileCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha((0.1 * 255).toInt()),
               blurRadius: 5,
               offset: Offset(0, 2),
             ),

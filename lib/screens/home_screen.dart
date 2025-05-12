@@ -4,14 +4,16 @@ import '../widgets/navigation_rail_widget.dart';
 import '../screens/friends_screen.dart';
 import '../screens/platform_screen.dart';
 import '../screens/login_screen.dart';
-import '../constants/platform_data.dart'; // <-- importamos los logos
+import '../constants/platform_data.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
 
   @override
