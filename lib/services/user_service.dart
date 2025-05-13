@@ -15,9 +15,10 @@ class UserService {
     if (user != null) {
       try {
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'nombre': nombre,
-          'apellido': apellido,
+          'name': nombre,
+          'lastname': apellido,
           'email': email,
+          'status': 'online',
           'createdAt': Timestamp.now(),
         });
       } catch (e) {

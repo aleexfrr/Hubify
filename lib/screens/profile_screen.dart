@@ -31,8 +31,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final userData = await _userService.getUserData();
       if (userData != null) {
-        _nombreController.text = userData['nombre'] ?? '';
-        _apellidoController.text = userData['apellido'] ?? '';
+        _nombreController.text = userData['name'] ?? '';
+        _apellidoController.text = userData['lastname'] ?? '';
         _emailController.text = userData['email'] ?? '';
       }
     } catch (e) {
