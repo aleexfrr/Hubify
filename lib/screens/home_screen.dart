@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:hubify/screens/dashboard_screen.dart';
 import 'package:hubify/screens/settings_screen.dart';
 import '../widgets/navigation_rail_widget.dart';
 import '../screens/friends_screen.dart';
@@ -54,16 +54,7 @@ class HomeScreenState extends State<HomeScreen> {
       case 7:
         return SettingsScreen();
       default:
-        return Center(
-          child: Text(
-            'Inicio',
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-        );
+        return const DashboardScreen();
     }
   }
 
