@@ -79,7 +79,7 @@ class FriendsScreen extends StatelessWidget {
             ),
           ),
           FutureBuilder<List<Map<String, dynamic>>>(
-            future: _getFriends(), // Llama al método para obtener los amigos
+            future: _getFriends(), // Llama a la función para obtener los amigos
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());

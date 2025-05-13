@@ -53,6 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           nombre: name,
           apellido: "lastname",
           email: email,
+          estado: "Online",
         );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

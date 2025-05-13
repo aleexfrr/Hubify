@@ -9,6 +9,7 @@ class UserService {
     required String nombre,
     required String apellido,
     required String email,
+    required String estado,
   }) async {
     final user = _auth.currentUser;
 
@@ -18,7 +19,7 @@ class UserService {
           'name': nombre,
           'lastname': apellido,
           'email': email,
-          'status': 'online',
+          'status': estado,
           'createdAt': Timestamp.now(),
         });
       } catch (e) {
