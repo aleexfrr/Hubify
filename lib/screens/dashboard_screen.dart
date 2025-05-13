@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hubify/constants/platform_data.dart';
 import '../services/user_stats_service.dart'; // Deberás crear este servicio
 import '../widgets/platform_stat_card.dart'; // Widget para mostrar stats por plataforma
 
@@ -49,6 +50,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ...stats.entries.map((entry) => PlatformStatCard(
                 platformName: entry.key,
                 stats: entry.value,
+                backgroundColor: PlatformData.platformColors[entry.key] ?? Colors.grey,
               )),
             ],
           ),

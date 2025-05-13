@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 class PlatformStatCard extends StatelessWidget {
   final String platformName;
   final Map<String, dynamic> stats;
+  final Color backgroundColor;
 
   const PlatformStatCard({
     super.key,
     required this.platformName,
     required this.stats,
+    required this.backgroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.grey[900],
+      color: backgroundColor,
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(

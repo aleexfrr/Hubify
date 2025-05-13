@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class PlatformData {
   static const Map<String, String> platformLogos = {
     'PlayStation': 'assets/icons/ps.png',
@@ -5,6 +7,14 @@ class PlatformData {
     'Ubisoft': 'assets/icons/ubisoft.png',
     'Steam': 'assets/icons/steam.png',
     'Epic Games': 'assets/icons/epicgames.png',
+  };
+
+  static const Map<String, Color> platformColors = {
+    'PlayStation': Color(0xFF003791),
+    'Xbox': Color(0xFF107C10),
+    'Ubisoft': Color(0xFF5A5AFF),
+    'Steam': Color(0xFF171A21),
+    'Epic Games': Color(0xFF313131),
   };
 
   static const Map<String, String> platformBackgrounds = {
