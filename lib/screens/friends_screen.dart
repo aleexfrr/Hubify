@@ -23,7 +23,7 @@ class FriendsScreen extends StatelessWidget {
             title: Row(
               children: [
                 ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 1100), // Limita el ancho
+                  constraints: BoxConstraints(maxWidth: 720), // Limita el ancho
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(

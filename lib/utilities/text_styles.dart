@@ -43,4 +43,11 @@ class TextStyles {
     fontWeight: FontWeight.w400,
     color: Colors.grey,
   );
+
+  /// Texto para títulos de secciones o encabezados secundarios
+  static TextStyle sectionTitleStyle(BuildContext context) => GoogleFonts.inter(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: Theme.of(context).colorScheme.primary,
+  );
 }

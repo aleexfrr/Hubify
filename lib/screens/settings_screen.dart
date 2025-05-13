@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hubify/screens/login_screen.dart';
 import 'package:hubify/screens/profile_screen.dart';
 import 'package:hubify/utilities/text_styles.dart';
+import 'package:hubify/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -22,16 +22,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return const LoginScreen(); // Si no está logueado, mostrar login
+      return const LoginScreen();
     }
 
     final themeProvider = Provider.of<ThemeProvider>(context);
-
-    final sectionTitleStyle = TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
-      color: Theme.of(context).colorScheme.primary,
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -39,68 +33,92 @@ class _SettingsScreenState extends State<SettingsScreen> {
         centerTitle: true,
       ),
       body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          const SizedBox(height: 16),
-
-          // Sección de Cuenta
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('Cuenta', style: sectionTitleStyle),
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Perfil'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(),
+          // ===== Cuenta =====
+          Text('Cuenta', style: TextStyles.sectionTitleStyle(context)),
+          const SizedBox(height: 8),
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 3,
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.person),
+                  title: const Text('Perfil'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfileScreen()),
+                    );
+                  },
                 ),
-              );
-            },
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.link),
+                  title: const Text('Conexiones vinculadas'),
+                  onTap: () {
+                    // Acción
+                  },
+                ),
+              ],
+            ),
           ),
-          const Divider(),
 
-          // Sección de Notificaciones
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('Notificaciones', style: sectionTitleStyle),
-          ),
-          SwitchListTile(
-            secondary: const Icon(Icons.notifications),
-            title: const Text('Notificaciones generales'),
-            value: notificationsEnabled,
-            onChanged: (bool value) {
-              setState(() {
-                notificationsEnabled = value;
-              });
-            },
-          ),
-          const Divider(),
+          const SizedBox(height: 24),
 
-          // Sección de Apariencia
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('Apariencia', style: sectionTitleStyle),
+          // ===== Notificaciones =====
+          Text('Notificaciones', style: TextStyles.sectionTitleStyle(context)),
+          const SizedBox(height: 8),
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 3,
+            child: SwitchListTile(
+              secondary: const Icon(Icons.notifications),
+              title: const Text('Notificaciones generales'),
+              value: notificationsEnabled,
+              onChanged: (bool value) {
+                setState(() {
+                  notificationsEnabled = value;
+                });
+              },
+            ),
           ),
-          SwitchListTile(
-            secondary: const Icon(Icons.dark_mode),
-            title: const Text('Tema oscuro'),
-            value: themeProvider.isDarkMode,
-            onChanged: (value) {
-              themeProvider.toggleTheme(value);
-            },
-          ),
-          const Divider(),
 
-          // Opción de Cerrar sesión
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Cerrar sesión'),
-            onTap: () async {
-              await FirebaseAuth.instance.signOut();
-              setState(() {}); // Fuerza el rebuild para mostrar el login
-            },
+          const SizedBox(height: 24),
+
+          // ===== Apariencia =====
+          Text('Apariencia', style: TextStyles.sectionTitleStyle(context)),
+          const SizedBox(height: 8),
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 3,
+            child: SwitchListTile(
+              secondary: const Icon(Icons.dark_mode),
+              title: const Text('Tema oscuro'),
+              value: themeProvider.isDarkMode,
+              onChanged: (value) {
+                themeProvider.toggleTheme(value);
+              },
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // ===== Cerrar sesión =====
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 3,
+            child: ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text(
+                'Cerrar sesión',
+                style: TextStyle(color: Colors.red),
+              ),
+              onTap: () {
+                CustomDialog.showLogoutDialog(context);
+              },
+            ),
           ),
         ],
       ),
