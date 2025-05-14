@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hubify/utilities/text_styles.dart';
 
 class FriendCard extends StatelessWidget {
-  final String name;
+  final String username;
   final String status;
   final Color statusColor;
 
   const FriendCard({
     super.key,
-    required this.name,
+    required this.username,
     required this.status,
     required this.statusColor,
   });
@@ -32,7 +32,7 @@ class FriendCard extends StatelessWidget {
             ),
           ],
         ),
-        title: Text(name),
+        title: Text(username),
         subtitle: 
           Text(
               status,

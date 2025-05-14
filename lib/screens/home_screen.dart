@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hubify/screens/dashboard_screen.dart';
 import 'package:hubify/screens/settings_screen.dart';
+import 'package:hubify/screens/login_screen.dart';
 import '../widgets/navigation_rail_widget.dart';
 import '../screens/friends_screen.dart';
 import '../screens/platform_screen.dart';
@@ -18,23 +20,43 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          NavigationRailWidget(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (int index) {
-              setState(() {
-                selectedIndex = index;
-              });
-            },
+    return FutureBuilder<User?>(
+      future: _checkLoginStatus(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Mientras se comprueba el login
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!snapshot.hasData) {
+          // No está logueado
+          return const LoginScreen();
+        }
+
+        // Usuario logueado
+        return Scaffold(
+          body: Row(
+            children: [
+              NavigationRailWidget(
+                selectedIndex: selectedIndex,
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+              ),
+              Expanded(
+                child: _getScreen(selectedIndex),
+              ),
+            ],
           ),
-          Expanded(
-            child: _getScreen(selectedIndex),
-          ),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  Future<User?> _checkLoginStatus() async {
+    return FirebaseAuth.instance.currentUser;
   }
 
   Widget _getScreen(int index) {
@@ -67,5 +89,4 @@ class HomeScreenState extends State<HomeScreen> {
       platformBackground: background,
     );
   }
-
 }

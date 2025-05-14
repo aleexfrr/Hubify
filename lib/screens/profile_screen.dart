@@ -12,6 +12,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final UserService _userService = UserService();
 
+  final TextEditingController _usuarioController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _apellidoController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -30,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final userData = await _userService.getUserData();
       if (userData != null) {
+        _usuarioController.text = userData['username'] ?? '';
         _nombreController.text = userData['name'] ?? '';
         _apellidoController.text = userData['lastname'] ?? '';
         _emailController.text = userData['email'] ?? '';
@@ -45,11 +47,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _updateProfile() async {
+    final apodo= _usuarioController.text.trim();
     final nombre = _nombreController.text.trim();
     final apellido = _apellidoController.text.trim();
     final email = _emailController.text.trim();
 
-    if (nombre.isEmpty || apellido.isEmpty || email.isEmpty || _estadoSeleccionado == null) {
+    if (apodo.isEmpty ||nombre.isEmpty || apellido.isEmpty || email.isEmpty || _estadoSeleccionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor completa todos los campos')),
       );
@@ -60,10 +63,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     try {
       await _userService.createUserDocument(
+        apodo: apodo,
         nombre: nombre,
         apellido: apellido,
         email: email,
         estado: _estadoSeleccionado!,
+        amigos:[],
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -100,6 +105,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               const SizedBox(height: 32),
               TextFormField(
+                controller: _usuarioController,
+                style: const TextStyle(color: Colors.white),
+                decoration: _inputDecoration("Nickname", Icons.person),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
                 controller: _nombreController,
                 style: const TextStyle(color: Colors.white),
                 decoration: _inputDecoration("Nombre", Icons.person),
@@ -125,10 +136,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 items: StatusData.statusAvailables
                     .map((estado) => DropdownMenuItem(
                   value: estado,
-                  child: Text(estado),
+                  child: Text(estado, style: TextStyle(color: StatusData.statusColors[estado])),
                 ))
                     .toList(),
-                onChanged: (value) => setState(() => _estadoSeleccionado = value),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => _estadoSeleccionado = value);
+                    _updateProfile();
+                  }
+                },
                 dropdownColor: Colors.grey[900],
                 style: const TextStyle(color: Colors.white),
                 decoration: _inputDecoration("Estado", Icons.circle, iconColor: StatusData.statusColors[_estadoSeleccionado]),

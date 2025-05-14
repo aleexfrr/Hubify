@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hubify/services/friend_service.dart';
+import '../services/friend_service.dart';
 
 class AddFriendScreen extends StatefulWidget {
   const AddFriendScreen({super.key});
@@ -11,6 +11,7 @@ class AddFriendScreen extends StatefulWidget {
 class _AddFriendScreenState extends State<AddFriendScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FriendService _friendService = FriendService();
+
   List<Map<String, dynamic>> _searchResults = [];
   bool _isLoading = false;
   String? _searchError;
@@ -46,15 +47,19 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   }
 
   void _addFriend(String friendId) async {
-    try {
-      await _friendService.addFriend(friendId);
+    setState(() => _isLoading = true);
+    final result = await _friendService.addFriend(friendId);
+
+    setState(() => _isLoading = false);
+
+    if (result == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Amigo agregado exitosamente')),
       );
-      _searchUser(); // Refrescar resultados
-    } catch (e) {
+      _searchUser(); // Refresca resultados después de agregar
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al agregar amigo')),
+        SnackBar(content: Text(result)),
       );
     }
   }
@@ -78,7 +83,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
               onFieldSubmitted: (_) => _searchUser(),
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                labelText: 'Buscar por nombre',
+                labelText: 'Buscar por nickname',
                 labelStyle: const TextStyle(color: Colors.white),
                 prefixIcon: const Icon(Icons.search, color: Colors.white),
                 errorText: _searchError,

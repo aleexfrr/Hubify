@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-import '../services/friend_service.dart'; // Importa el servicio de amigos
+import 'package:hubify/constants/status_data.dart';
+import 'package:provider/provider.dart';
+import '../providers/friend_provider.dart';
 import '../widgets/friend_card.dart';
 import 'add_friend_screen.dart';
 
 class FriendsScreen extends StatelessWidget {
   const FriendsScreen({super.key});
 
-  // Función para cargar los amigos utilizando FriendService
-  Future<List<Map<String, dynamic>>> _getFriends() async {
-    final FriendService friendService = FriendService();
-    return await friendService.getFriends();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final friendProvider = Provider.of<FriendProvider>(context, listen: false);
+
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60),
+        preferredSize: const Size.fromHeight(60),
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(20),
               bottomRight: Radius.circular(20),
@@ -31,12 +29,12 @@ class FriendsScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
                       color: Colors.white.withAlpha((0.2 * 255).toInt()),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: TextField(
+                    child: const TextField(
                       decoration: InputDecoration(
                         hintText: 'Buscar...',
                         hintStyle: TextStyle(color: Colors.white70),
@@ -47,7 +45,7 @@ class FriendsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Container(
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
@@ -55,7 +53,7 @@ class FriendsScreen extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: Icon(Icons.person_add, color: Colors.white),
+                    icon: const Icon(Icons.person_add, color: Colors.white),
                     tooltip: 'Agregar amigo',
                     onPressed: () {
                       Navigator.push(
@@ -78,48 +76,33 @@ class FriendsScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          FutureBuilder<List<Map<String, dynamic>>>(
-            future: _getFriends(), // Llama a la función para obtener los amigos
+          StreamBuilder<List<Map<String, dynamic>>>(
+            stream: friendProvider.friendsStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
 
               if (snapshot.hasError) {
-                return Center(child: Text("Error al cargar los amigos"));
+                return const Center(child: Text("Error al cargar amigos"));
               }
 
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                // return Center(child: Text("No tienes amigos aún"));
+              final friends = snapshot.data ?? [];
 
-                final exampleFriends = [
-                  {'name': 'Sarah Johnson', 'status': 'Online', 'statusColor': Colors.green},
-                  {'name': 'Michael Chen', 'status': 'Offline', 'statusColor': Colors.red},
-                  {'name': 'Jessica Taylor', 'status': 'Ocupado', 'statusColor': Colors.yellow},
-                ];
-
-                return ListView.builder(
-                  itemCount: exampleFriends.length,
-                  itemBuilder: (context, index) {
-                    final friend = exampleFriends[index];
-                    return FriendCard(
-                      name: friend['name'] as String,
-                      status: friend['status'] as String,
-                      statusColor: friend['statusColor'] as Color,
-                    );
-                  },
-                );
+              if (friends.isEmpty) {
+                return const Center(child: Text("No tienes amigos aún"));
               }
 
-              // Carga los amigos en la interfaz
-              return ListView(
-                children: snapshot.data!.map((friend) {
+              return ListView.builder(
+                itemCount: friends.length,
+                itemBuilder: (context, index) {
+                  final friend = friends[index];
                   return FriendCard(
-                    name: friend['name'],
-                    status: friend['status'],
-                    statusColor: Color(int.parse(friend['statusColor'])),
+                    username: friend['username']!,
+                    status: friend['status']!,
+                    statusColor: StatusData.statusColors[friend['status']]!,
                   );
-                }).toList(),
+                },
               );
             },
           ),

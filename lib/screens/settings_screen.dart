@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hubify/screens/login_screen.dart';
 import 'package:hubify/screens/profile_screen.dart';
 import 'package:hubify/utilities/text_styles.dart';
 import 'package:hubify/widgets/custom_dialog.dart';
@@ -19,12 +17,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) {
-      return const LoginScreen();
-    }
-
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(

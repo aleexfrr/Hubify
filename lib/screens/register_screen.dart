@@ -15,6 +15,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
+  final usernameController = TextEditingController();
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -26,13 +27,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isLoading = false;
 
   void _register() async {
+    final username = usernameController.text.trim();
     final name = nameController.text.trim();
     // final lastName = lastNameController.text.trim(); // Asegúrate de tener un controlador para el apellido
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
     // Validar que los campos no estén vacíos
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+    if (username.isEmpty || name.isEmpty || email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor completa todos los campos')),
       );
@@ -50,10 +52,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (user != null) {
         await _userService.createUserDocument(
+          apodo: username,
           nombre: name,
           apellido: "lastname",
           email: email,
           estado: "Online",
+          amigos:[],
         );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -135,7 +139,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 32),
-
+                          // Nickname
+                          TextFormField(
+                            controller: usernameController,
+                            style: const TextStyle(color: Colors.white),
+                            validator: Utils.validateName,
+                            decoration: _inputDecoration("Nickname", Icons.person),
+                          ),
+                          const SizedBox(height: 20),
                           // Nombre
                           TextFormField(
                             controller: nameController,

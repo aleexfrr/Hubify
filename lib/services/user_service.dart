@@ -6,20 +6,24 @@ class UserService {
 
   // Función para crear un documento de usuario en Firestore
   Future<void> createUserDocument({
+    required String apodo,
     required String nombre,
     required String apellido,
     required String email,
     required String estado,
+    required List<String> amigos,
   }) async {
     final user = _auth.currentUser;
 
     if (user != null) {
       try {
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'username': apodo,
           'name': nombre,
           'lastname': apellido,
           'email': email,
           'status': estado,
+          'friends':amigos,
           'createdAt': Timestamp.now(),
         });
       } catch (e) {
