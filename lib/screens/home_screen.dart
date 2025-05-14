@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hubify/screens/dashboard_screen.dart';
 import 'package:hubify/screens/settings_screen.dart';
 import 'package:hubify/screens/login_screen.dart';
-import '../widgets/navigation_rail_widget.dart';
+import '../widgets/navigation_bar_widget.dart';
 import '../screens/friends_screen.dart';
 import '../screens/platform_screen.dart';
 import '../constants/platform_data.dart';
@@ -34,23 +34,37 @@ class HomeScreenState extends State<HomeScreen> {
         }
 
         // Usuario logueado
+        // Para dispositivos móviles, usar BottomNavigationBar
         return Scaffold(
-          body: Row(
-            children: [
-              NavigationRailWidget(
-                selectedIndex: selectedIndex,
-                onDestinationSelected: (int index) {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-              ),
-              Expanded(
-                child: _getScreen(selectedIndex),
-              ),
-            ],
+          body: _getScreen(selectedIndex),
+          bottomNavigationBar: BottomNavigationBarWidget(
+            selectedIndex: selectedIndex,
+            onItemTapped: (int index) {
+              setState(() {
+                selectedIndex = index;
+              });
+            },
           ),
         );
+
+        // Para dispositivos de escritorio, usar NavigationRail
+        // return Scaffold(
+        //   body: Row(
+        //     children: [
+        //       NavigationRailWidget(
+        //         selectedIndex: selectedIndex,
+        //         onDestinationSelected: (int index) {
+        //           setState(() {
+        //             selectedIndex = index;
+        //           });
+        //         },
+        //       ),
+        //       Expanded(
+        //         child: _getScreen(selectedIndex),
+        //       ),
+        //     ],
+        //   ),
+        // );
       },
     );
   }

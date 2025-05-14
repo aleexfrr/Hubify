@@ -33,11 +33,18 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
         textTheme: GoogleFonts.interTextTheme(),
       ),
-      darkTheme: ThemeData.dark().copyWith(
-        textTheme: GoogleFonts.interTextTheme(),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       ),
       themeMode: themeProvider.themeMode,
       title: 'Hubify',
