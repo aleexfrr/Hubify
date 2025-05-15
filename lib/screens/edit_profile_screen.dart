@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import '../constants/status_data.dart';
 import '../services/user_service.dart';
+import '../utilities/text_styles.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class EditProfileScreen extends StatefulWidget {
+  const EditProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _EditProfileScreenState extends State<EditProfileScreen> {
   final UserService _userService = UserService();
 
   final TextEditingController _usuarioController = TextEditingController();
@@ -47,12 +48,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _updateProfile() async {
-    final apodo= _usuarioController.text.trim();
+    final apodo = _usuarioController.text.trim();
     final nombre = _nombreController.text.trim();
     final apellido = _apellidoController.text.trim();
     final email = _emailController.text.trim();
 
-    if (apodo.isEmpty ||nombre.isEmpty || apellido.isEmpty || email.isEmpty || _estadoSeleccionado == null) {
+    if (apodo.isEmpty || nombre.isEmpty || apellido.isEmpty || email.isEmpty || _estadoSeleccionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor completa todos los campos')),
       );
@@ -62,13 +63,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await _userService.createUserDocument(
+      await _userService.updateUserDocument(
         apodo: apodo,
         nombre: nombre,
         apellido: apellido,
         email: email,
         estado: _estadoSeleccionado!,
-        amigos:[],
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
+    _usuarioController.dispose();
     _nombreController.dispose();
     _apellidoController.dispose();
     _emailController.dispose();
@@ -94,7 +95,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Perfil')),
+      appBar: AppBar(
+        title: Text('Editar perfil', style: TextStyles.headerLarge),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: _isLoading
@@ -130,14 +134,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 20),
 
-              /// Dropdown para estado
+              /// Dropdown con actualización automática de estado
               DropdownButtonFormField<String>(
                 value: _estadoSeleccionado,
                 items: StatusData.statusAvailables
                     .map((estado) => DropdownMenuItem(
-                  value: estado,
-                  child: Text(estado, style: TextStyle(color: StatusData.statusColors[estado])),
-                ))
+                    value: estado,
+                    child: Text(estado, style: TextStyle(color: StatusData.statusColors[estado])),
+                  ))
                     .toList(),
                 onChanged: (value) {
                   if (value != null) {
@@ -147,7 +151,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 dropdownColor: Colors.grey[900],
                 style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration("Estado", Icons.circle, iconColor: StatusData.statusColors[_estadoSeleccionado]),
+                decoration: _inputDecoration(
+                  "Estado",
+                  Icons.circle,
+                  iconColor: StatusData.statusColors[_estadoSeleccionado],
+                ),
               ),
               const SizedBox(height: 30),
 

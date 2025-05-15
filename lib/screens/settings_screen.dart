@@ -1,5 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hubify/screens/profile_screen.dart';
+import 'package:hubify/screens/user_profile_screen.dart';
 import 'package:hubify/utilities/text_styles.dart';
 import 'package:hubify/widgets/custom_dialog.dart';
 import 'package:provider/provider.dart';
@@ -39,9 +40,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: const Icon(Icons.person),
                   title: const Text('Perfil'),
                   onTap: () {
+                    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ProfileScreen()),
+                      MaterialPageRoute(builder: (context) => UserProfileScreen(userId: currentUserId, isCurrentUser: true)),
                     );
                   },
                 ),

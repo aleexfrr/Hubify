@@ -32,6 +32,30 @@ class UserService {
     }
   }
 
+  Future<void> updateUserDocument({
+    required String apodo,
+    required String nombre,
+    required String apellido,
+    required String email,
+    required String estado,
+  }) async {
+    final user = _auth.currentUser;
+
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+          'username': apodo,
+          'name': nombre,
+          'lastname': apellido,
+          'email': email,
+          'status': estado,
+        });
+      } catch (e) {
+        throw Exception('Error al actualizar el documento de usuario: $e');
+      }
+    }
+  }
+
   // Función para obtener los datos del usuario desde Firestore
   Future<Map<String, dynamic>?> getUserData() async {
     final user = _auth.currentUser;

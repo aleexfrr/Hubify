@@ -57,6 +57,9 @@ class FriendService {
       await userRef.update({
         'friends': FieldValue.arrayUnion([friendId]),
       });
+      await friendRef.update({
+        'friends': FieldValue.arrayUnion([userId]),
+      });
 
       return null; // null = éxito
     } catch (e) {

@@ -101,6 +101,7 @@ class FriendsScreen extends StatelessWidget {
                     username: friend['username']!,
                     status: friend['status']!,
                     statusColor: StatusData.statusColors[friend['status']]!,
+                    friendId: friend['id'],
                   );
                 },
               );
