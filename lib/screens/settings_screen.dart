@@ -110,7 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(color: Colors.red),
               ),
               onTap: () {
-                CustomDialog.showLogoutDialog(context);
+                CustomDialog.show(context, type: DialogType.logout);
               },
             ),
           ),

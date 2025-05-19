@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 class StatusData {
   static const List<String> statusAvailables = [
     'Online',
-    'Offline',
+    'Absent',
     'Busy',
     'Invisible',
   ];
 
   static const Map<String, Color> statusColors = {
     'Online': Colors.green,
-    'Offline': Colors.grey,
+    'Absent': Colors.orange,
     'Busy': Colors.red,
-    'Invisible': Colors.orange,
+    'Invisible': Colors.grey,
   };
 }

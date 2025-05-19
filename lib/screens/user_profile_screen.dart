@@ -60,7 +60,7 @@ class UserProfileScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(data['photoUrl'] ?? ''),
+                  backgroundImage: AssetImage('assets/images/default_avatar.png'),
                   backgroundColor: Colors.grey[800],
                 ),
                 const SizedBox(height: 20),
@@ -92,7 +92,7 @@ class UserProfileScreen extends StatelessWidget {
                           style: TextStyles.body,
                         ),
                       ),
-                      const Divider(height: 1, color: Colors.grey),
+                      const Divider(height: 1),
                       ListTile(
                         leading: Icon(Icons.circle, color: StatusData.statusColors[data['status']], size: 16),
                         title: Text(
@@ -106,7 +106,7 @@ class UserProfileScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Divider(height: 1, color: Colors.grey),
+                      const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.group, color: Colors.white),
                         title: Text(

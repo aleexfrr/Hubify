@@ -70,12 +70,7 @@ class FriendsScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/bg_friends.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
+
           StreamBuilder<List<Map<String, dynamic>>>(
             stream: friendProvider.friendsStream,
             builder: (context, snapshot) {

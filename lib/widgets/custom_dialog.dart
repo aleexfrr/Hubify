@@ -2,21 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hubify/screens/home_screen.dart';
 
+enum DialogType {
+  logout,
+  updateProfile,
+}
+
 class CustomDialog {
-  static Future<void> showLogoutDialog(BuildContext context) async {
+  static Future<void> show(
+      BuildContext context, {
+        required DialogType type,
+        VoidCallback? onConfirm,
+      }) async {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    final String title;
+    final String content;
+    final String confirmText;
+    final Color confirmColor;
+
+    switch (type) {
+      case DialogType.logout:
+        title = '¿Cerrar sesión?';
+        content = '¿Estás seguro de que deseas cerrar sesión?';
+        confirmText = 'Cerrar sesión';
+        confirmColor = Colors.red;
+        break;
+      case DialogType.updateProfile:
+        title = '¿Actualizar perfil?';
+        content = '¿Deseas guardar los cambios realizados en tu perfil?';
+        confirmText = 'Actualizar';
+        confirmColor = Colors.blue;
+        break;
+    }
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          '¿Cerrar sesión?',
+          title,
           style: TextStyle(
             color: isDarkMode ? Colors.white : Colors.black,
           ),
         ),
         content: Text(
-          '¿Estás seguro de que deseas cerrar sesión?',
+          content,
           style: TextStyle(
             color: isDarkMode ? Colors.white70 : Colors.black87,
           ),
@@ -36,21 +65,26 @@ class CustomDialog {
           TextButton(
             onPressed: () async {
               Navigator.pop(context); // Cierra el diálogo
-              await FirebaseAuth.instance.signOut();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
-                    (route) => false, // Elimina todas las pantallas anteriores
-              );
+
+              if (type == DialogType.logout) {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                      (route) => false,
+                );
+              } else {
+                onConfirm?.call();
+              }
             },
             style: TextButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: Colors.red,
+              backgroundColor: confirmColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text('Cerrar sesión'),
+            child: Text(confirmText),
           ),
         ],
       ),

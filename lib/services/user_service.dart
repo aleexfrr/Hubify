@@ -12,6 +12,8 @@ class UserService {
     required String email,
     required String estado,
     required List<String> amigos,
+    required String imageUrl,
+
   }) async {
     final user = _auth.currentUser;
 
@@ -25,6 +27,8 @@ class UserService {
           'status': estado,
           'friends':amigos,
           'createdAt': Timestamp.now(),
+          'imageUrl':imageUrl,
+
         });
       } catch (e) {
         throw Exception('Error al crear el documento de usuario: $e');
@@ -38,6 +42,8 @@ class UserService {
     required String apellido,
     required String email,
     required String estado,
+    required String? imagenUrl,
+
   }) async {
     final user = _auth.currentUser;
 
@@ -49,6 +55,7 @@ class UserService {
           'lastname': apellido,
           'email': email,
           'status': estado,
+         // 'imageUrl' : imagenUrl,
         });
       } catch (e) {
         throw Exception('Error al actualizar el documento de usuario: $e');

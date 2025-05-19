@@ -36,24 +36,24 @@ class PlatformData {
   static const Map<String, List<Map<String, String>>> platformAccounts = {
     'PlayStation': [
       {
-        'profileImage': 'assets/icons/profile.jpeg',
+        'profileImage': 'assets/images/default_avatar.png',
         'nickname': 'GamerX',
         'email': 'gamerx@example.com',
       },
       {
-        'profileImage': 'assets/icons/profile.jpeg',
+        'profileImage': 'assets/images/default_avatar.png',
         'nickname': 'SniperQueen',
         'email': 'sniperq@example.com',
       },
     ],
     'Xbox': [
       {
-        'profileImage': 'assets/icons/profile.jpeg',
+        'profileImage': 'assets/images/default_avatar.png',
         'nickname': 'ProDestroyer',
         'email': 'prodestroyer@example.com',
       },
       {
-        'profileImage': 'assets/icons/profile.jpeg',
+        'profileImage': 'assets/images/default_avatar.png',
         'nickname': 'AceHunter',
         'email': 'acehunter@example.com',
       },

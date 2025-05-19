@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../constants/status_data.dart';
 import '../services/user_service.dart';
 import '../utilities/text_styles.dart';
+import '../widgets/custom_dialog.dart';
+import '../widgets/profile_image_picker.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -21,6 +23,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _estadoSeleccionado;
   bool _isLoading = false;
 
+  String? _imagenLocalUrl; // URL local para mostrar preview de la imagen subida
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _apellidoController.text = userData['lastname'] ?? '';
         _emailController.text = userData['email'] ?? '';
         _estadoSeleccionado = userData['status'] ?? StatusData.statusAvailables.first;
+        _imagenLocalUrl = userData['imagenUrl']; // Si tienes url imagen guardada, la cargas aquí para preview
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -53,6 +58,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final apellido = _apellidoController.text.trim();
     final email = _emailController.text.trim();
 
+
     if (apodo.isEmpty || nombre.isEmpty || apellido.isEmpty || email.isEmpty || _estadoSeleccionado == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor completa todos los campos')),
@@ -63,12 +69,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() => _isLoading = true);
 
     try {
+      // Usamos la imagen seleccionada si existe, sino null (o si quieres subir siempre, cambia aquí)
+      final imagenUrl = _imagenLocalUrl;
+
       await _userService.updateUserDocument(
         apodo: apodo,
         nombre: nombre,
         apellido: apellido,
         email: email,
         estado: _estadoSeleccionado!,
+        imagenUrl: imagenUrl,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -107,6 +117,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16),
+              Center(
+                child: ProfileImagePicker(),
+              ),
               const SizedBox(height: 32),
               TextFormField(
                 controller: _usuarioController,
@@ -134,14 +148,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               const SizedBox(height: 20),
 
-              /// Dropdown con actualización automática de estado
               DropdownButtonFormField<String>(
                 value: _estadoSeleccionado,
                 items: StatusData.statusAvailables
                     .map((estado) => DropdownMenuItem(
-                    value: estado,
-                    child: Text(estado, style: TextStyle(color: StatusData.statusColors[estado])),
-                  ))
+                  value: estado,
+                  child: Text(estado, style: TextStyle(color: StatusData.statusColors[estado])),
+                ))
                     .toList(),
                 onChanged: (value) {
                   if (value != null) {
@@ -162,7 +175,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _updateProfile,
+                  onPressed: () {
+                    CustomDialog.show(context, type: DialogType.updateProfile,
+                      onConfirm: () {
+                        Navigator.pop(context);
+                        _updateProfile();
+                      },
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
