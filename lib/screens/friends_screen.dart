@@ -5,8 +5,32 @@ import '../providers/friend_provider.dart';
 import '../widgets/friend_card.dart';
 import 'add_friend_screen.dart';
 
-class FriendsScreen extends StatelessWidget {
+class FriendsScreen extends StatefulWidget {
   const FriendsScreen({super.key});
+
+  @override
+  State<FriendsScreen> createState() => _FriendsScreenState();
+}
+
+class _FriendsScreenState extends State<FriendsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchText = _searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +58,15 @@ class FriendsScreen extends StatelessWidget {
                       color: Colors.white.withAlpha((0.2 * 255).toInt()),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const TextField(
-                      decoration: InputDecoration(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
                         hintText: 'Buscar...',
                         hintStyle: TextStyle(color: Colors.white70),
                         border: InputBorder.none,
                         icon: Icon(Icons.search, color: Colors.white),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
@@ -70,7 +95,6 @@ class FriendsScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-
           StreamBuilder<List<Map<String, dynamic>>>(
             stream: friendProvider.friendsStream,
             builder: (context, snapshot) {
@@ -84,14 +108,19 @@ class FriendsScreen extends StatelessWidget {
 
               final friends = snapshot.data ?? [];
 
-              if (friends.isEmpty) {
-                return const Center(child: Text("No tienes amigos aún"));
+              final filteredFriends = friends.where((friend) {
+                final username = friend['username']?.toLowerCase() ?? '';
+                return username.contains(_searchText);
+              }).toList();
+
+              if (filteredFriends.isEmpty) {
+                return const Center(child: Text("No se encontraron amigos"));
               }
 
               return ListView.builder(
-                itemCount: friends.length,
+                itemCount: filteredFriends.length,
                 itemBuilder: (context, index) {
-                  final friend = friends[index];
+                  final friend = filteredFriends[index];
                   return FriendCard(
                     username: friend['username']!,
                     status: friend['status']!,

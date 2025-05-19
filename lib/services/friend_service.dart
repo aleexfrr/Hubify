@@ -67,4 +67,30 @@ class FriendService {
       return 'Error al agregar amigo.';
     }
   }
+
+  /// Elimina un amigo del usuario actual
+  Future<String?> removeFriend(String friendId) async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return 'Usuario no autenticado.';
+
+    final userRef = _firestore.collection('users').doc(userId);
+    final friendRef = _firestore.collection('users').doc(friendId);
+
+    try {
+      // Eliminar el amigo del array del usuario
+      await userRef.update({
+        'friends': FieldValue.arrayRemove([friendId]),
+      });
+
+      // Eliminar al usuario actual del array del amigo
+      await friendRef.update({
+        'friends': FieldValue.arrayRemove([userId]),
+      });
+
+      return null; // null = éxito
+    } catch (e) {
+      print('Error al eliminar amigo: $e');
+      return 'Error al eliminar amigo.';
+    }
+  }
 }
