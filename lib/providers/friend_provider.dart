@@ -39,4 +39,15 @@ class FriendProvider with ChangeNotifier {
       },
     );
   }
+
+  Stream<int> get pendingRequestsCountStream {
+    return _firestore
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .snapshots()
+        .map((doc) {
+      final requests = List<String>.from(doc['friendRequests'] ?? []);
+      return requests.length;
+    });
+  }
 }

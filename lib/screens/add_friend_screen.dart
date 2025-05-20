@@ -13,8 +13,22 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   final FriendService _friendService = FriendService();
 
   List<Map<String, dynamic>> _searchResults = [];
+  List<Map<String, dynamic>> _sentRequests = [];
   bool _isLoading = false;
   String? _searchError;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSentRequests();
+  }
+
+  Future<void> _loadSentRequests() async {
+    final requests = await _friendService.getSentRequestsDetailed();
+    setState(() {
+      _sentRequests = requests;
+    });
+  }
 
   void _searchUser() async {
     final query = _searchController.text.trim();
@@ -46,17 +60,16 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     }
   }
 
-  void _addFriend(String friendId) async {
+  void _sendFriendRequest(String friendId) async {
     setState(() => _isLoading = true);
-    final result = await _friendService.addFriend(friendId);
-
+    final result = await _friendService.sendFriendRequest(friendId);
     setState(() => _isLoading = false);
 
     if (result == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Amigo agregado exitosamente')),
+        const SnackBar(content: Text('Solicitud enviada con éxito')),
       );
-      _searchUser(); // Refresca resultados después de agregar
+      _loadSentRequests(); // Refresca la lista de solicitudes enviadas
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(result)),
@@ -114,12 +127,16 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                 itemCount: _searchResults.length,
                 itemBuilder: (context, index) {
                   final user = _searchResults[index];
+                  final alreadyRequested = _sentRequests.contains(user['id']);
+
                   return ListTile(
                     title: Text(user['name']),
                     subtitle: Text('Estado: ${user['status']}'),
-                    trailing: IconButton(
+                    trailing: alreadyRequested
+                        ? const Text('Solicitado', style: TextStyle(color: Colors.grey))
+                        : IconButton(
                       icon: const Icon(Icons.person_add),
-                      onPressed: () => _addFriend(user['id']),
+                      onPressed: () => _sendFriendRequest(user['id']),
                     ),
                   );
                 },

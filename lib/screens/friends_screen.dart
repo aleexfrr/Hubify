@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/friend_provider.dart';
 import '../widgets/friend_card.dart';
 import 'add_friend_screen.dart';
+import 'friend_requests_screen.dart';
 
 class FriendsScreen extends StatefulWidget {
   const FriendsScreen({super.key});
@@ -71,6 +72,63 @@ class _FriendsScreenState extends State<FriendsScreen> {
                   ),
                 ),
                 const SizedBox(width: 12),
+                // Ver solicitudes
+                StreamBuilder<int>(
+                  stream: friendProvider.pendingRequestsCountStream,
+                  builder: (context, snapshot) {
+                    final count = snapshot.data ?? 0;
+
+                    return Stack(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(right: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withAlpha((0.1 * 255).toInt()),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.group, color: Colors.white),
+                            tooltip: 'Solicitudes de amistad',
+                            onPressed: () {
+                              // Aquí puedes abrir una pantalla modal o nueva pantalla
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const FriendRequestsScreen(), // debes crear esta pantalla
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        if (count > 0)
+                          Positioned(
+                            right: 4,
+                            top: 4,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 20,
+                                minHeight: 20,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '$count',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
                 Container(
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
