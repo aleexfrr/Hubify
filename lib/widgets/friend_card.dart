@@ -79,7 +79,7 @@ class FriendCard extends StatelessWidget {
         leading: Stack(
           children: [
             const CircleAvatar(
-              backgroundImage: NetworkImage(''), // Imagen pendiente
+              // backgroundImage: NetworkImage(''),
             ),
             Positioned(
               bottom: 0,
