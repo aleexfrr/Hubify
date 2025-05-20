@@ -1,16 +1,59 @@
-# hubify
+# App Hubify
 
-A new Flutter project.
+## Tenemos:
+- Login/registro.
+- Función agregar amigos (Falta enviar solicitudes).
+- Perfil usuario.
+- Editar perfil.
+- Modo oscuro.
+- Barra de búsqueda de amigos y usuarios.
 
-## Getting Started
+## Falta:
+- Notificaciones de solicitudes de amistad.
+- Widgets dinámicos estadísticas generales.
+- Widgets cuantas vinculadas.
+- Subir foto perfil.
+- Servicios de plataformas.
+- Servicios Node.js.
 
-This project is a starting point for a Flutter application.
+## Extras:
+- Editar datos de info del perfil cuentas (psn, xbox, …).
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# Base de datos FireBase
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tenemos:
+- Colecciones de los usuarios:
+    - Nombre
+    - Apellidos
+    - Correo
+    - Nick-Name
+    - Amigos
+    - fechacreacion
+
+## Falta:
+- Colección de usuarios:
+    - imagen
+    - ArrayList plataformas
+
+- Colección plataformas:
+    - identificador colección
+    - identificador usuario
+        - plataforma: “Xbox”
+        - Usuario: “jota14”
+        - UIDUsuario: 12312321
+
+## Extra:
+- Crear colección admin
+    - rango de permisos para eliminar.
+
+---
+
+# Servidor Nodejs
+
+## Tenemos:
+- Servidor para recibir y enviar info.
+
+## Falta:
+- Aplicar las APIs de cada plataforma.
