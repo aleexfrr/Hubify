@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hubify/screens/linked_accounts_screen.dart';
 import 'package:hubify/screens/user_profile_screen.dart';
 import 'package:hubify/utilities/text_styles.dart';
 import 'package:hubify/widgets/custom_dialog.dart';
@@ -52,7 +53,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: const Icon(Icons.link),
                   title: const Text('Conexiones vinculadas'),
                   onTap: () {
-                    // Acción
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LinkedAccountsScreen()),
+                    );
                   },
                 ),
               ],
