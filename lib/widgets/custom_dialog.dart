@@ -5,6 +5,8 @@ import 'package:hubify/screens/home_screen.dart';
 enum DialogType {
   logout,
   updateProfile,
+  deleteAccount,
+  desactivateAccount,
 }
 
 class CustomDialog {
@@ -32,6 +34,18 @@ class CustomDialog {
         content = '¿Deseas guardar los cambios realizados en tu perfil?';
         confirmText = 'Actualizar';
         confirmColor = Colors.blue;
+        break;
+      case DialogType.deleteAccount:
+        title = '¿Eliminar cuenta?';
+        content = '¿Estás seguro de que deseas eliminar tu cuenta?';
+        confirmText = 'Eliminar cuenta';
+        confirmColor = Colors.red;
+        break;
+      case DialogType.desactivateAccount:
+        title = '¿Desactivar cuenta?';
+        content = '¿Estás seguro de que deseas desactivar tu cuenta?';
+        confirmText = 'Desactivar cuenta';
+        confirmColor = Colors.orange;
         break;
     }
 

@@ -78,4 +78,26 @@ class UserService {
       throw Exception('Error al obtener los datos del usuario: $e');
     }
   }
+
+  // Eliminar cuenta y documento del usuario
+  Future<void> deleteUserAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('Usuario no autenticado');
+
+    try {
+      // Eliminar documento en Firestore
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
+
+      // Eliminar usuario de Firebase Auth
+      await user.delete();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw Exception('Debes volver a iniciar sesión para eliminar tu cuenta.');
+      } else {
+        throw Exception('Error al eliminar la cuenta: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Error general al eliminar la cuenta: $e');
+    }
+  }
 }
