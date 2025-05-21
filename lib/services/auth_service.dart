@@ -38,7 +38,7 @@ class AuthService {
     switch (e.code) {
       case 'user-not-found':
         return 'Usuario no encontrado';
-      case 'wrong-password':
+      case 'invalid-credential':
         return 'Contraseña incorrecta';
       case 'email-already-in-use':
         return 'El correo ya está registrado';
@@ -47,7 +47,7 @@ class AuthService {
       case 'weak-password':
         return 'Contraseña demasiado débil';
       default:
-        return 'Error: ${e.message}';
+        return 'Error: ${e.code}';
     }
   }
 }
