@@ -3,11 +3,13 @@
 ## Tenemos:
 - Login/registro.
 - Función agregar amigos.
+- Función eliminar amigos.
 - Perfil usuario.
 - Editar perfil.
 - Cuentas vinculadas (solo la vista).
 - Modo oscuro.
 - Barra de búsqueda de amigos y usuarios.
+- Eliminar cuenta
 
 ## Falta:
 - Notificaciones de solicitudes de amistad.
@@ -16,7 +18,7 @@
 - Servicios de vincular plataformas.
 
 ## Extras:
-- Editar datos de info del perfil cuentas (psn, xbox, …).
+- Editar datos de info del perfil cuentas vinculadas (psn, xbox, …).
 
 ---
 
