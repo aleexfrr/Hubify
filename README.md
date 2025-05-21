@@ -2,19 +2,18 @@
 
 ## Tenemos:
 - Login/registro.
-- Función agregar amigos (Falta enviar solicitudes).
+- Función agregar amigos.
 - Perfil usuario.
 - Editar perfil.
+- Cuentas vinculadas (solo la vista).
 - Modo oscuro.
 - Barra de búsqueda de amigos y usuarios.
 
 ## Falta:
 - Notificaciones de solicitudes de amistad.
 - Widgets dinámicos estadísticas generales.
-- Widgets cuantas vinculadas.
 - Subir foto perfil.
-- Servicios de plataformas.
-- Servicios Node.js.
+- Servicios de vincular plataformas.
 
 ## Extras:
 - Editar datos de info del perfil cuentas (psn, xbox, …).
@@ -30,6 +29,8 @@
     - Correo
     - Nick-Name
     - Amigos
+    - solicitudesEnviadas
+    - solicitudesRecibidas
     - fechacreacion
 
 ## Falta:
