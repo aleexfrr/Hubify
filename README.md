@@ -12,6 +12,9 @@
 - Eliminar cuenta
 
 ## Falta:
+- Deshabilitar cuenta.
+- Corregir mensaje de error al tener cuenta deshabilitada.
+- Mostrar en ProfileScreen la fecha de creación del usuario.
 - Notificaciones de solicitudes de amistad.
 - Widgets dinámicos estadísticas generales.
 - Subir foto perfil.
@@ -37,7 +40,8 @@
 
 ## Falta:
 - Colección de usuarios:
-    - imagen
+    - image
+    - disabled (si esta o no deshabilitada la cuenta)
     - ArrayList plataformas
 
 - Colección plataformas:
