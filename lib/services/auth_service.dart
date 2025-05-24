@@ -1,15 +1,35 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../models/login_result.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<User?> loginWithEmail(String email, String password) async {
+  Future<LoginResult> loginWithEmail(String email, String password) async {
     try {
       final result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return result.user;
+
+      final user = result.user;
+
+      if (user != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (userDoc.exists && userDoc.data()?['disabled'] == true) {
+          // await _auth.signOut();
+          return LoginResult(isDisabled: true);
+        }
+
+        return LoginResult(user: user);
+      } else {
+        throw Exception('No se pudo iniciar sesión.');
+      }
     } on FirebaseAuthException catch (e) {
       throw Exception(_getErrorMessage(e));
     }

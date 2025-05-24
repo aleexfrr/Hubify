@@ -3,7 +3,7 @@ import 'package:hubify/screens/forgot_password_screen.dart';
 import 'package:hubify/screens/register_screen.dart';
 import 'package:hubify/utilities/utils.dart';
 import 'package:hubify/services/auth_service.dart';
-
+import 'disabled_account_screen.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
 
   bool isLoading = false;
-  bool _isPasswordVisible = true; // Variable para controlar la visibilidad de la contraseña
+  bool _isPasswordVisible = true;
 
   void _login() async {
     final email = emailController.text.trim();
@@ -36,26 +36,33 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = true);
 
     try {
-      final user = await _authService.loginWithEmail(email, password);
-      if (user != null) {
-        if (mounted) {  // Verifica que el widget sigue montado
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Inicio de sesión exitoso')),
-          );
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen())
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {  // Verifica que el widget sigue montado
+      final result = await _authService.loginWithEmail(email, password);
+
+      if (!mounted) return;
+
+      if (result.isDisabled) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DisabledAccountScreen(),
+          ),
+        );
+      } else if (result.user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          const SnackBar(content: Text('Inicio de sesión exitoso')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     } finally {
-      if (mounted) {  // Verifica que el widget sigue montado
+      if (mounted) {
         setState(() => isLoading = false);
       }
     }

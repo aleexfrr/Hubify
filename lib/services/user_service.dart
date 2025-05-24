@@ -11,7 +11,6 @@ class UserService {
     required String apellido,
     required String email,
     required String estado,
-    required List<String> amigos,
     required String imageUrl,
 
   }) async {
@@ -25,10 +24,10 @@ class UserService {
           'lastname': apellido,
           'email': email,
           'status': estado,
-          'friends':amigos,
+          'friends': [],
           'createdAt': Timestamp.now(),
           'imageUrl':imageUrl,
-
+          'disabled': false,
         });
       } catch (e) {
         throw Exception('Error al crear el documento de usuario: $e');
@@ -98,6 +97,22 @@ class UserService {
       }
     } catch (e) {
       throw Exception('Error general al eliminar la cuenta: $e');
+    }
+  }
+
+  // Deshabilitar cuenta (solo actualiza campo en Firestore)
+  Future<void> disableUserAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('Usuario no autenticado');
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+        'disabled': true,
+      });
+      // Cerrar sesión automáticamente
+      await _auth.signOut();
+    } catch (e) {
+      throw Exception('Error al deshabilitar la cuenta: $e');
     }
   }
 }

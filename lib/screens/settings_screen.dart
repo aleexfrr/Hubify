@@ -62,6 +62,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _handleDisableAccount(BuildContext context) async {
+    final userService = UserService();
+
+    try {
+      await userService.disableUserAccount();
+      await FirebaseAuth.instance.signOut();
+
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (route) => false,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al deshabilitar la cuenta: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -162,7 +185,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onTap: () {
                     CustomDialog.show(context, type: DialogType.desactivateAccount,
                       onConfirm: () async {
-                        // Aquí puedes agregar la lógica para deshabilitar la cuenta
+                        await _handleDisableAccount(context);
                       },
                     );
                   },

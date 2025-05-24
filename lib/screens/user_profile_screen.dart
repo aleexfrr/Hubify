@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import '../constants/status_data.dart';
 import '../utilities/text_styles.dart';
 import 'edit_profile_screen.dart';
@@ -108,6 +109,18 @@ class UserProfileScreen extends StatelessWidget {
                       ),
                       const Divider(height: 1),
                       ListTile(
+                        leading: const Icon(Icons.calendar_today, color: Colors.white),
+                        title: Text(
+                          'Miembro desde',
+                          style: TextStyles.sectionTitleStyle(context),
+                        ),
+                        subtitle: Text(
+                          _formatDate(data['createdAt']),
+                          style: TextStyles.body,
+                        ),
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
                         leading: const Icon(Icons.group, color: Colors.white),
                         title: Text(
                           'Amigos',
@@ -127,5 +140,15 @@ class UserProfileScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  String _formatDate(dynamic timestamp) {
+    if (timestamp == null) return 'Fecha no disponible';
+    try {
+      final date = (timestamp as Timestamp).toDate();
+      return DateFormat('d MMMM yyyy', 'es_ES').format(date); // Ej: 14 mayo 2025
+    } catch (_) {
+      return 'Fecha inválida';
+    }
   }
 }
