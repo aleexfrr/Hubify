@@ -27,6 +27,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isLoading = false;
 
   void _register() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     final username = usernameController.text.trim();
     final name = nameController.text.trim();
     // final lastName = lastNameController.text.trim(); // Asegúrate de tener un controlador para el apellido
