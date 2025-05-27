@@ -25,9 +25,9 @@ class ProfileCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha((0.1 * 255).toInt()),
-              blurRadius: 5,
-              offset: Offset(0, 2),
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -41,10 +41,16 @@ class ProfileCard extends StatelessWidget {
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
-                child: Image.asset(
+                child: Image.network(
                   profileImage,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                  const Center(child: Icon(Icons.broken_image, size: 40, color: Colors.grey)),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(child: CircularProgressIndicator());
+                  },
                 ),
               ),
             ),
@@ -52,21 +58,28 @@ class ProfileCard extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      nickname,
-                      style: TextStyles.caption,
-                      textAlign: TextAlign.center,
+                    Flexible(
+                      child: Text(
+                        nickname,
+                        style: TextStyles.caption.copyWith(fontWeight: FontWeight.w600),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      email,
-                      style: TextStyles.body,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
+                    Flexible(
+                      child: Text(
+                        email,
+                        style: TextStyles.body.copyWith(color: Colors.grey[600], fontSize: 12),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
                   ],
                 ),
