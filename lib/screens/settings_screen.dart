@@ -119,7 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.link),
-                  title: const Text('Conexiones vinculadas'),
+                  title: const Text('Gestionar cuentas vinculadas'),
                   onTap: () {
                     Navigator.push(
                       context,

@@ -3,9 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import '../constants/status_data.dart';
 import '../utilities/text_styles.dart';
+import '../widgets/linked_account_card.dart';
 import 'edit_profile_screen.dart';
+import '../web_service/xbox_ws.dart';
 
-class UserProfileScreen extends StatelessWidget {
+class UserProfileScreen extends StatefulWidget {
   final String userId;
   final bool isCurrentUser;
 
@@ -16,15 +18,68 @@ class UserProfileScreen extends StatelessWidget {
   });
 
   @override
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
+  late Future<DocumentSnapshot> _userFuture;
+  List<Map<String, String>> _linkedAccounts = [];
+  bool _loadingAccounts = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _userFuture = FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
+    _loadLinkedAccounts();
+  }
+
+  Future<void> _loadLinkedAccounts() async {
+    try {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
+      final platforms = doc.data()?['platforms'] as List<dynamic>? ?? [];
+
+      final List<Map<String, String>> data = [];
+
+      for (final platform in platforms) {
+        final accountId = platform['id'];
+        final type = platform['type']?.toLowerCase();
+
+        if (accountId == null || type == null) continue;
+
+        if (type == 'xbox') {
+          final profile = await XboxWebService.getDatosCuentaXbox(accountId);
+          if (profile['Gamertag'] != null && profile['GameDisplayPicRaw'] != null) {
+            data.add({
+              'accountId': accountId,
+              'nickname': profile['Gamertag'] ?? '',
+              'profileImage': profile['GameDisplayPicRaw'] ?? '',
+            });
+          }
+        }
+
+        // Aquí podrías añadir casos para Steam, PSN, etc.
+      }
+
+      setState(() {
+        _linkedAccounts = data;
+        _loadingAccounts = false;
+      });
+    } catch (e) {
+      print('Error al cargar cuentas vinculadas: $e');
+      setState(() => _loadingAccounts = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isCurrentUser ? 'Mi Perfil' : 'Perfil del Amigo',
+          widget.isCurrentUser ? 'Mi Perfil' : 'Perfil del Amigo',
           style: TextStyles.headerLarge,
         ),
         centerTitle: true,
-        actions: isCurrentUser
+        actions: widget.isCurrentUser
             ? [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -39,9 +94,9 @@ class UserProfileScreen extends StatelessWidget {
             : null,
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
+        future: _userFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting || _loadingAccounts) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -84,22 +139,13 @@ class UserProfileScreen extends StatelessWidget {
                     children: [
                       ListTile(
                         leading: const Icon(Icons.email, color: Colors.white),
-                        title: Text(
-                          'Correo electrónico',
-                          style: TextStyles.sectionTitleStyle(context),
-                        ),
-                        subtitle: Text(
-                          data['email'] ?? 'No disponible',
-                          style: TextStyles.body,
-                        ),
+                        title: Text('Correo electrónico', style: TextStyles.sectionTitleStyle(context)),
+                        subtitle: Text(data['email'] ?? 'No disponible', style: TextStyles.body),
                       ),
                       const Divider(height: 1),
                       ListTile(
                         leading: Icon(Icons.circle, color: StatusData.statusColors[data['status']], size: 16),
-                        title: Text(
-                          'Estado',
-                          style: TextStyles.sectionTitleStyle(context),
-                        ),
+                        title: Text('Estado', style: TextStyles.sectionTitleStyle(context)),
                         subtitle: Text(
                           data['status'] ?? 'No disponible',
                           style: TextStyles.body.copyWith(
@@ -110,30 +156,52 @@ class UserProfileScreen extends StatelessWidget {
                       const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.calendar_today, color: Colors.white),
-                        title: Text(
-                          'Miembro desde',
-                          style: TextStyles.sectionTitleStyle(context),
-                        ),
-                        subtitle: Text(
-                          _formatDate(data['createdAt']),
-                          style: TextStyles.body,
-                        ),
+                        title: Text('Miembro desde', style: TextStyles.sectionTitleStyle(context)),
+                        subtitle: Text(_formatDate(data['createdAt']), style: TextStyles.body),
                       ),
                       const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.group, color: Colors.white),
-                        title: Text(
-                          'Amigos',
-                          style: TextStyles.sectionTitleStyle(context),
-                        ),
-                        subtitle: Text(
-                          '${(data['friends'] as List?)?.length ?? 0} amigos',
-                          style: TextStyles.body,
-                        ),
+                        title: Text('Amigos', style: TextStyles.sectionTitleStyle(context)),
+                        subtitle: Text('${(data['friends'] as List?)?.length ?? 0} amigos', style: TextStyles.body),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 20),
+                if (_linkedAccounts.isNotEmpty) ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Cuentas vinculadas',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _linkedAccounts.length,
+                    padding: const EdgeInsets.all(8),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.75,
+                    ),
+                    itemBuilder: (context, index) {
+                      final account = _linkedAccounts[index];
+                      return LinkedAccountCard(
+                        platform: 'Xbox',
+                        nickname: account['nickname'] ?? '',
+                        profileImage: account['profileImage'] ?? '',
+                        onTap: () {
+                          // Lógica de navegación si la deseas
+                        },
+                      );
+                    },
+                  ),
+                ]
               ],
             ),
           );
@@ -146,7 +214,7 @@ class UserProfileScreen extends StatelessWidget {
     if (timestamp == null) return 'Fecha no disponible';
     try {
       final date = (timestamp as Timestamp).toDate();
-      return DateFormat('d MMMM yyyy', 'es_ES').format(date); // Ej: 14 mayo 2025
+      return DateFormat('d MMMM yyyy', 'es_ES').format(date);
     } catch (_) {
       return 'Fecha inválida';
     }

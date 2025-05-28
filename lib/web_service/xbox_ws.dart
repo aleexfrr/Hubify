@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class XboxWebService {
-  static const String baseUrl = "http://192.168.14.225:3000/xbox";
+  static const String baseUrl = "http://192.168.1.103:3000/xbox";
 
   static Future<Map<String, dynamic>> getPerfilPorGamertag(String gamertag) async {
     final url = Uri.parse('$baseUrl/perfiles/$gamertag');

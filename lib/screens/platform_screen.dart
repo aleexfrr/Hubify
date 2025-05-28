@@ -124,7 +124,7 @@ class _PlatformScreenState extends State<PlatformScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    BuscarPerfilScreen(plataforma: widget.platformName),
+                                    SearchProfileScreen(plataforma: widget.platformName),
                               ),
                             );
                           },
