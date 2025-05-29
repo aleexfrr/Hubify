@@ -1,12 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hubify/screens/xbox_profile_screen.dart';
 import 'package:hubify/screens/search_profile_screen.dart';
 import 'package:hubify/utilities/text_styles.dart';
 import 'package:hubify/widgets/profile_card.dart';
-import '../web_service/ps_ws.dart';
-import '../web_service/xbox_ws.dart';
+import '../services/linked_accounts_service.dart';
 import 'ps_profile_screen.dart';
 
 
@@ -41,58 +39,12 @@ class _PlatformScreenState extends State<PlatformScreen> {
     if (user == null) return;
 
     try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-      final platforms = userDoc.data()?['platforms'] as List<dynamic>? ?? [];
-      print('Cuentas vinculadas: $platforms');
-      final filteredAccounts = platforms
-          .where((platform) =>
-      platform['type']?.toString().toLowerCase() ==
-          widget.platformName.toLowerCase())
-          .toList();
-      print('platforms: $widget.platformName');
-      print('Filtered accounts for ${widget.platformName}: $filteredAccounts');
-      final List<Map<String, String>> data = [];
-
-      for (final platform in filteredAccounts) {
-        final accountId = platform['id'];
-        if (accountId == null) continue;
-
-        Map<String, dynamic> profile = {};
-
-        if (widget.platformName.toLowerCase() == 'xbox') {
-          profile = await XboxWebService.getDatosCuentaXbox(accountId);
-          if (profile['Gamertag'] != null &&
-              profile['GameDisplayPicRaw'] != null) {
-            data.add({
-              'accountId': accountId,
-              'nickname': profile['Gamertag'],
-              'profileImage': profile['GameDisplayPicRaw'],
-            });
-          }
-        } else if (widget.platformName.toLowerCase() == 'playstation') {
-          profile = await PSWebService.obtenerPerfilPorAccountId(accountId);
-          if (profile['onlineId'] != null && profile['avatarUrls'] != null) {
-            final avatar = (profile['avatarUrls'] as List).isNotEmpty
-                ? profile['avatarUrls'].last['avatarUrl']
-                : null;
-            if (avatar != null) {
-              data.add({
-                'accountId': accountId,
-                'nickname': profile['onlineId'],
-                'profileImage': avatar,
-              });
-            }
-          }
-        }
-
-        // Aquí puedes agregar más plataformas en el futuro
-      }
-
+      final accounts = await LinkedAccountsService.getLinkedAccounts(
+        userId: user.uid,
+        platformName: widget.platformName,
+      );
       setState(() {
-        _accountData = data;
+        _accountData = accounts;
         _isLoading = false;
       });
     } catch (e) {
