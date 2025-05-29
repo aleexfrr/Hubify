@@ -10,11 +10,11 @@
 - Modo oscuro.
 - Barra de búsqueda de amigos y usuarios.
 - Eliminar cuenta
-
-## Falta:
 - Deshabilitar cuenta.
 - Corregir mensaje de error al tener cuenta deshabilitada.
-- Mostrar en ProfileScreen la fecha de creación del usuario.
+- Servicio de vincular plataformas (solo xbox)
+
+## Falta:
 - Notificaciones de solicitudes de amistad.
 - Widgets dinámicos estadísticas generales.
 - Subir foto perfil.
