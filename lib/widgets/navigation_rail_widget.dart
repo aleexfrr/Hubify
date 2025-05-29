@@ -75,10 +75,6 @@ class NavigationRailWidget extends StatelessWidget {
               label: Text('Steam'),
             ),
             NavigationRailDestination(
-              icon: _platformIcon('Epic Games'),
-              label: Text('Epic Games'),
-            ),
-            NavigationRailDestination(
               icon: Icon(Icons.settings),
               label: Text('Ajustes'),
             ),
