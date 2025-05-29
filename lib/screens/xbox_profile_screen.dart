@@ -107,25 +107,14 @@ class _XboxProfileScreenState extends State<XboxProfileScreen> {
                       elevation: 3,
                       color: Colors.grey[900],
                       child: Column(
-                        children: [
-                          if (perfil['RealName'] != null && perfil['RealName']!.isNotEmpty)
-                            _buildTile(Icons.person, 'Nombre real', perfil['RealName']!),
-                          if (perfil['AccountTier'] != null && perfil['AccountTier']!.isNotEmpty)
-                            _buildTile(Icons.star, 'Tier', perfil['AccountTier']!),
-                          if (perfil['XboxOneRep'] != null && perfil['XboxOneRep']!.isNotEmpty)
-                            _buildTile(Icons.thumb_up, 'Reputación', perfil['XboxOneRep']!),
-                          if (perfil['Bio'] != null && perfil['Bio']!.isNotEmpty)
-                            _buildTile(Icons.description, 'Biografía', perfil['Bio']!),
-                          if (perfil['Location'] != null && perfil['Location']!.isNotEmpty)
-                            _buildTile(Icons.location_on, 'Ubicación', perfil['Location']!),
-                        ],
+                        children: _buildProfileDetails(perfil),
                       ),
                     ),
                     const SizedBox(height: 30),
                     const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Juegos recientes',
+                        'Juegos jugados',
                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -138,7 +127,7 @@ class _XboxProfileScreenState extends State<XboxProfileScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
-                      childAspectRatio: 0.75, // Ajusta según alto/anchura del GameCard
+                      childAspectRatio: 0.75,
                       children: juegos.map((juego) => GameCard(juego: juego)).toList(),
                     ),
                   ],
@@ -151,16 +140,38 @@ class _XboxProfileScreenState extends State<XboxProfileScreen> {
     );
   }
 
-  Widget _buildTile(IconData icon, String title, String subtitle) {
-    return Column(
-      children: [
-        ListTile(
-          leading: Icon(icon, color: Colors.white),
-          title: Text(title, style: TextStyles.sectionTitleStyle(context)),
-          subtitle: Text(subtitle, style: TextStyles.body),
-        ),
-        const Divider(height: 1),
-      ],
-    );
+  List<Widget> _buildProfileDetails(Map<String, String> perfil) {
+    final tiles = <Map<String, dynamic>>[];
+
+    if (perfil['RealName'] != null && perfil['RealName']!.isNotEmpty) {
+      tiles.add({'icon': Icons.person, 'title': 'Nombre real', 'value': perfil['RealName']!});
+    }
+    if (perfil['AccountTier'] != null && perfil['AccountTier']!.isNotEmpty) {
+      tiles.add({'icon': Icons.star, 'title': 'Tier', 'value': perfil['AccountTier']!});
+    }
+    if (perfil['XboxOneRep'] != null && perfil['XboxOneRep']!.isNotEmpty) {
+      tiles.add({'icon': Icons.thumb_up, 'title': 'Reputación', 'value': perfil['XboxOneRep']!});
+    }
+    if (perfil['Bio'] != null && perfil['Bio']!.isNotEmpty) {
+      tiles.add({'icon': Icons.description, 'title': 'Biografía', 'value': perfil['Bio']!});
+    }
+    if (perfil['Location'] != null && perfil['Location']!.isNotEmpty) {
+      tiles.add({'icon': Icons.location_on, 'title': 'Ubicación', 'value': perfil['Location']!});
+    }
+
+    return List.generate(tiles.length, (index) {
+      final tile = tiles[index];
+      final isLast = index == tiles.length - 1;
+      return Column(
+        children: [
+          ListTile(
+            leading: Icon(tile['icon'], color: Colors.white),
+            title: Text(tile['title'], style: TextStyles.sectionTitleStyle(context)),
+            subtitle: Text(tile['value'], style: TextStyles.body),
+          ),
+          if (!isLast) const Divider(height: 1),
+        ],
+      );
+    });
   }
 }

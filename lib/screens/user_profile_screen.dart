@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hubify/screens/xbox_profile_screen.dart';
 import 'package:intl/intl.dart';
 import '../constants/status_data.dart';
 import '../utilities/text_styles.dart';
+import '../web_service/ps_ws.dart';
 import '../widgets/linked_account_card.dart';
+import 'ps_profile_screen.dart';
 import 'edit_profile_screen.dart';
 import '../web_service/xbox_ws.dart';
 
@@ -53,6 +56,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               'accountId': accountId,
               'nickname': profile['Gamertag'] ?? '',
               'profileImage': profile['GameDisplayPicRaw'] ?? '',
+              'type': platform['type'] ?? '',
+            });
+          }
+        } else if (type == 'playstation') {
+          final profile = await PSWebService.obtenerPerfilPorAccountId(accountId);
+          if (profile['onlineId'] != null && profile['avatarUrls'] != null) {
+            final avatarUrl = profile['avatarUrls'].isNotEmpty
+                ? profile['avatarUrls'][0]['avatarUrl']
+                : '';
+            data.add({
+              'accountId': accountId,
+              'nickname': profile['onlineId'] ?? '',
+              'profileImage': avatarUrl ?? '',
+              'type': platform['type'] ?? '',
             });
           }
         }
@@ -192,11 +209,30 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     itemBuilder: (context, index) {
                       final account = _linkedAccounts[index];
                       return LinkedAccountCard(
-                        platform: 'Xbox',
+                        platform: account['type'] ?? 'N/A',
                         nickname: account['nickname'] ?? '',
                         profileImage: account['profileImage'] ?? '',
                         onTap: () {
-                          // Lógica de navegación si la deseas
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                if (account['type'] == 'xbox') {
+                                  return XboxProfileScreen(
+                                      xuid: account['accountId'] ?? '');
+                                } else if (account['type'] == 'playstation') {
+                                  return PlaystationProfileScreen(
+                                    accountId: account['accountId'] ?? '',
+                                    nickname: account['nickname'] ?? '',
+                                  );
+                                } else {
+                                  return const Scaffold(
+                                    body: Center(child: Text('Pantalla no implementada')),
+                                  );
+                                }
+                              },
+                            ),
+                          );
                         },
                       );
                     },
