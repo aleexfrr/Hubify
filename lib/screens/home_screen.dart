@@ -86,8 +86,6 @@ class HomeScreenState extends State<HomeScreen> {
       case 5:
         return _buildPlatformScreen('Steam');
       case 6:
-        return _buildPlatformScreen('Epic Games');
-      case 7:
         return SettingsScreen();
       default:
         return const DashboardScreen();

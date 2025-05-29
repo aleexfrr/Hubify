@@ -56,14 +56,6 @@ class BottomNavigationBarWidget extends StatelessWidget {
                 onItemTapped(5);
               },
             ),
-            ListTile(
-              leading: _platformIcon('Epic Games'),
-              title: const Text('Epic Games'),
-              onTap: () {
-                Navigator.pop(context);
-                onItemTapped(6);
-              },
-            ),
           ],
         ),
       ),
@@ -76,7 +68,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
     int visualIndex;
     if (selectedIndex == 0 || selectedIndex == 1) {
       visualIndex = selectedIndex;
-    } else if (selectedIndex == 7) {
+    } else if (selectedIndex == 6) {
       visualIndex = 3; // Ajustes
     } else {
       visualIndex = 2; // Plataformas
@@ -94,7 +86,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
             _showMoreOptions(context);
             break;
           case 3:
-            onItemTapped(7); // Ajustes
+            onItemTapped(6); // Ajustes
             break;
         }
       },
