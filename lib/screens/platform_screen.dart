@@ -1,12 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hubify/screens/SteamProfileScreen%20.dart';
 import 'package:hubify/screens/xbox_profile_screen.dart';
 import 'package:hubify/screens/search_profile_screen.dart';
 import 'package:hubify/utilities/text_styles.dart';
 import 'package:hubify/widgets/profile_card.dart';
-import '../services/linked_accounts_service.dart';
+import 'package:hubify/web_service/steam_login_webview.dart';
+import '../web_service/ps_ws.dart';
+import '../web_service/steam_ws.dart';
+import '../web_service/xbox_ws.dart';
 import 'ps_profile_screen.dart';
-
 
 class PlatformScreen extends StatefulWidget {
   final String platformName;
@@ -39,12 +43,62 @@ class _PlatformScreenState extends State<PlatformScreen> {
     if (user == null) return;
 
     try {
-      final accounts = await LinkedAccountsService.getLinkedAccounts(
-        userId: user.uid,
-        platformName: widget.platformName,
-      );
+      final userDoc =
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final platforms = userDoc.data()?['platforms'] as List<dynamic>? ?? [];
+      final filteredAccounts = platforms
+          .where((platform) =>
+      platform['type']?.toString().toLowerCase() ==
+          widget.platformName.toLowerCase())
+          .toList();
+
+      final List<Map<String, String>> data = [];
+
+      for (final platform in filteredAccounts) {
+        final accountId = platform['id'];
+        if (accountId == null) continue;
+
+        Map<String, dynamic> profile = {};
+
+        final platformName = widget.platformName.toLowerCase();
+
+        if (platformName == 'xbox') {
+          profile = await XboxWebService.getDatosCuentaXbox(accountId);
+          if (profile['Gamertag'] != null && profile['GameDisplayPicRaw'] != null) {
+            data.add({
+              'accountId': accountId,
+              'nickname': profile['Gamertag'],
+              'profileImage': profile['GameDisplayPicRaw'],
+            });
+          }
+        } else if (platformName == 'playstation') {
+          profile = await PSWebService.obtenerPerfilPorAccountId(accountId);
+          if (profile['onlineId'] != null && profile['avatarUrls'] != null) {
+            final avatar = (profile['avatarUrls'] as List).isNotEmpty
+                ? profile['avatarUrls'].last['avatarUrl']
+                : null;
+            if (avatar != null) {
+              data.add({
+                'accountId': accountId,
+                'nickname': profile['onlineId'],
+                'profileImage': avatar,
+              });
+            }
+          }
+        } else if (platformName == 'steam') {
+          profile = await SteamWebService.getDatosCuentaSteam(accountId);
+          if (profile['steamid'] != null && profile['avatarfull'] != null) {
+            data.add({
+              'accountId': accountId,
+              'nickname': profile['personaname'],
+              'profileImage': profile['avatarfull'],
+            });
+          }
+        }
+      }
+
       setState(() {
-        _accountData = accounts;
+        _accountData = data;
         _isLoading = false;
       });
     } catch (e) {
@@ -53,19 +107,47 @@ class _PlatformScreenState extends State<PlatformScreen> {
     }
   }
 
+  void _handleAddAccount() {
+    final platform = widget.platformName.toLowerCase();
+    if (platform == 'steam') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SteamLoginWebView(
+            onLoginSuccess: (steamData) {
+              Navigator.pop(context); // Cierra el WebView
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SteamProfileScreen(steamData: steamData),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SearchProfileScreen(
+            plataforma: widget.platformName,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Fondo
         Positioned.fill(
           child: Image.asset(
             widget.platformBackground,
             fit: BoxFit.cover,
           ),
         ),
-
-        // Contenido
         Column(
           children: [
             const SizedBox(height: 60),
@@ -74,7 +156,6 @@ class _PlatformScreenState extends State<PlatformScreen> {
             const SizedBox(height: 12),
             Text('Cuentas de ${widget.platformName}', style: TextStyles.headerLarge),
             const SizedBox(height: 16),
-
             Expanded(
               child: Center(
                 child: _isLoading
@@ -84,8 +165,7 @@ class _PlatformScreenState extends State<PlatformScreen> {
                   child: GridView.builder(
                     itemCount: _accountData.length + 1,
                     padding: const EdgeInsets.all(8),
-                    gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
@@ -94,15 +174,7 @@ class _PlatformScreenState extends State<PlatformScreen> {
                     itemBuilder: (context, index) {
                       if (index == _accountData.length) {
                         return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    SearchProfileScreen(plataforma: widget.platformName),
-                              ),
-                            );
-                          },
+                          onTap: _handleAddAccount,
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
@@ -113,8 +185,7 @@ class _PlatformScreenState extends State<PlatformScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: const [
-                                  Icon(Icons.add,
-                                      size: 40, color: Colors.white),
+                                  Icon(Icons.add, size: 40, color: Colors.white),
                                   SizedBox(height: 8),
                                   Text(
                                     'Agregar cuenta',
@@ -135,27 +206,40 @@ class _PlatformScreenState extends State<PlatformScreen> {
                         profileImage: account['profileImage'] ?? '',
                         nickname: account['nickname'] ?? '',
                         email: '',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                if (widget.platformName.toLowerCase() == 'xbox') {
-                                  return XboxProfileScreen(
-                                      xuid: account['accountId'] ?? '');
-                                } else if (widget.platformName.toLowerCase() == 'playstation') {
-                                  return PlaystationProfileScreen(
-                                      accountId: account['accountId'] ?? '',
-                                      nickname: account['nickname'] ?? '',
-                                  );
-                                } else {
-                                  return const Scaffold(
-                                    body: Center(child: Text('Pantalla no implementada')),
-                                  );
-                                }
-                              },
-                            ),
-                          );
+                        onTap: () async {
+                          final platform = widget.platformName.toLowerCase();
+                          if (platform == 'xbox') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => XboxProfileScreen(
+                                  xuid: account['accountId'] ?? '',
+                                ),
+                              ),
+                            );
+                          } else if (platform == 'playstation') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PlaystationProfileScreen(
+                                  accountId: account['accountId'] ?? '',
+                                  nickname: account['nickname'] ?? '',
+                                ),
+                              ),
+                            );
+                          } else if (platform == 'steam') {
+                            var profile = await SteamWebService.getDatosCuentaSteam(account['accountId'] ?? '');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => SteamProfileScreen(steamData: profile),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Plataforma no implementada')),
+                            );
+                          }
                         },
                       );
                     },

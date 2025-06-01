@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class StatusData {
-  static String get ipAddress => '192.168.1.105';
+  static String get ipAddress => '192.168.249.225';
 
   static const List<String> statusAvailables = [
     'Online',

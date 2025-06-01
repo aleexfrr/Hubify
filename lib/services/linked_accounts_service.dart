@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../web_service/ps_ws.dart';
+import '../web_service/steam_ws.dart';
 import '../web_service/xbox_ws.dart';
 
 class LinkedAccountsService {
@@ -48,7 +49,16 @@ class LinkedAccountsService {
         }
         break;
 
-    // Agrega más plataformas aquí según sea necesario
+      case 'steam':
+        final profile = await SteamWebService.getDatosCuentaSteam(accountId);
+        if (profile['steamid'] != null && profile['avatarfull'] != null) {
+          return {
+            'accountId': accountId,
+            'nickname': profile['personaname'] ?? '',
+            'profileImage': profile['avatarfull'] ?? '',
+          };
+        }
+        break;
 
       default:
         return null;
