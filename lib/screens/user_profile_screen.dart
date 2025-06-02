@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hubify/screens/SteamProfileScreen%20.dart';
 import 'package:hubify/screens/xbox_profile_screen.dart';
 import 'package:intl/intl.dart';
 import '../constants/status_data.dart';
 import '../utilities/text_styles.dart';
 import '../web_service/ps_ws.dart';
+import '../web_service/steam_ws.dart';
 import '../widgets/linked_account_card.dart';
 import 'ps_profile_screen.dart';
 import 'edit_profile_screen.dart';
@@ -72,9 +74,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               'type': platform['type'] ?? '',
             });
           }
+        } else if (type == 'steam') {
+          final profile = await SteamWebService.getDatosCuentaSteam(accountId);
+          if (profile['steamid'] != null && profile['avatarfull'] != null) {
+            data.add({
+              'accountId': accountId,
+              'nickname': profile['personaname'] ?? '',
+              'profileImage': profile['avatarfull'] ?? '',
+              'type': platform['type'] ?? '',
+            });
+          }
         }
-
-        // Aquí podrías añadir casos para Steam, PSN, etc.
       }
 
       setState(() {
@@ -222,9 +232,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       xuid: account['accountId'] ?? '');
                                 } else if (account['type'] == 'playstation') {
                                   return PlaystationProfileScreen(
-                                    accountId: account['accountId'] ?? '',
-                                    nickname: account['nickname'] ?? '',
+                                  accountId: account['accountId'] ?? '',
+                                  nickname: account['nickname'] ?? '',
                                   );
+                                } else if (account['type'] == 'steam') {
+                                  return SteamProfileScreen(steamData: account);
                                 } else {
                                   return const Scaffold(
                                     body: Center(child: Text('Pantalla no implementada')),
